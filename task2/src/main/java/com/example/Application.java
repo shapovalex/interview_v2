@@ -11,7 +11,11 @@ public class Application {
         ThreadPoolExecutor executor = new ThreadPoolExecutor(10, 10, 6L, TimeUnit.HOURS, new ArrayBlockingQueue<>(taskCount * 2));
         long start = System.currentTimeMillis();
         for (int i = 0; i < taskCount; i++) {
-            Runnable r = calculationService::doOperation;
+            Runnable r = () -> {
+                for (int j = 0; j < 100_000; j++) {
+                    calculationService.doOperation();
+                }
+            };
             executor.submit(r);
         }
         while (executor.getCompletedTaskCount() != taskCount) {
